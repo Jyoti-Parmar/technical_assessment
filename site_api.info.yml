@@ -1,0 +1,8 @@
+name: Site API
+type: module
+description: This module added Site API field to Site Information Form 
+package: custom
+version: 1.0
+core: 8.x
+dependencies:
+  - restui

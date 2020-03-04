@@ -1,0 +1,40 @@
+<?php 
+
+use Drupal\Core\Form\FormStateInterface;
+
+/**
+ * Implementing hook_form_FORM_ID_alter
+ */
+function site_api_form_system_site_information_settings_alter(&$form, FormStateInterface $form_state, $form_id) {
+ $config = \Drupal::config('system.siteapikey');
+	$form['site_information']['api_key'] = [
+		'#type' => 'textfield',
+		'#title' => t("Site API Key"),
+		'#default_value' => $config->get('siteapikey') ?  $config->get('siteapikey') : 'No API Key yet' ,
+	];
+	if (!empty($config->get('siteapikey'))) {
+		$form['actions']['submit']['#value'] = t('Update configuration');
+	}
+
+	 $form['actions']['submit']['#submit'][] = 'site_api_site_information_submit';
+}
+
+//custom submit handler
+function site_api_site_information_submit($form, FormStateInterface $form_state) {
+
+	$api = $form_state->getValue('api_key');
+	
+	\Drupal::configFactory()->getEditable('system.siteapikey')
+	 ->set('siteapikey', $api)->save();
+
+    \Drupal::messenger()->addStatus('Site API Key has been saved with value '. $api);
+}
+
+/**
+ * Implements hook_uninstall().
+ */
+function site_api_uninstall(){
+    // Remove the previously set Site API Key configuration
+    \Drupal::configFactory()->getEditable('system.siteapikey')->delete();
+    db_delete('config')->condition('name', 'rest.resource.site_api_resource.yml')->execute();
+}

@@ -1,0 +1,10 @@
+id: site_api_resource
+plugin_id: site_api_resource
+granularity: resource
+configuration:
+  methods:
+    - GET
+  formats:
+    - json
+  authentication:
+    - cookie
