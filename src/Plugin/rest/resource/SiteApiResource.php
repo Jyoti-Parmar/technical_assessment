@@ -1,4 +1,4 @@
-<?php 
+<?php
 
 namespace Drupal\site_api\Plugin\rest\resource;
 
@@ -8,7 +8,7 @@ use Drupal\node\Entity\Node;
 use Drupal\Core\Cache\CacheableMetadata;
 
 /**
- * Provides a Site Resource
+ * Provides a Site Resource.
  *
  * @RestResource(
  *   id = "site_api_resource",
@@ -18,38 +18,42 @@ use Drupal\Core\Cache\CacheableMetadata;
  *   }
  * )
  */
-
 class SiteApiResource extends ResourceBase {
 
-	//set permission to get access to resource 
-	protected function getBaseRouteRequirements($method) {
-		$requirements = parent::getBaseRouteRequirements($method);
-		if ($method === 'GET') {
-			$requirements['_permission'] = 'access content';
-		}
-		return $requirements;
-	}
+  /**
+   * Set permission to get access to resource.
+   */
+  protected function getBaseRouteRequirements($method) {
+    $requirements = parent::getBaseRouteRequirements($method);
+    if ($method === 'GET') {
+      $requirements['_permission'] = 'access content';
+    }
+    return $requirements;
+  }
 
   /**
    * Responds to entity GET requests.
+   *
    * @return \Drupal\rest\ResourceResponse
    */
-  	public function get($node_id) {
-  		$config = \Drupal::config('system.siteapikey');
-  	 	$node = Node::load($node_id);
-		
-  	 	if(!empty($config->get('siteapikey')) && is_object($node) && $node->getType() == 'page'){
+  public function get($node_id) {
+    $config = \Drupal::config('system.siteapikey');
+    $node = Node::load($node_id);
 
-			$response = $node;
-	 	}else {
-	 		$response = "Access Denied";
-	 	}
-	 	$res_response = new ResourceResponse($response);
-	 	$disable_cache = new CacheableMetadata();
-		$disable_cache->setCacheMaxAge(0);
+    if (!empty($config->get('siteapikey')) && is_object($node) && $node->getType() == 'page') {
 
-		$res_response->addCacheableDependency($disable_cache);
+      $response = $node;
+    }
+    else {
+      $response = "Access Denied";
+    }
+    $res_response = new ResourceResponse($response);
+    $disable_cache = new CacheableMetadata();
+    $disable_cache->setCacheMaxAge(0);
 
-    	return $res_response;
-  	}
+    $res_response->addCacheableDependency($disable_cache);
+
+    return $res_response;
+  }
+
 }
